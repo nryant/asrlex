@@ -125,7 +125,7 @@ class G2P:
         word = remap_reserved_symbols(word)
         prons = set()
         with pipes() as (stdout, stderr):
-            # Phonetisaurus writes annoying warnigns to STDERR whenever it
+            # Phonetisaurus writes annoying warnings to STDERR whenever it
             # encounters an unknown symbol, so need this hack to prevent
             # console from being polluted.
             for result in self._model.Phoneticize(
