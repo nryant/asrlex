@@ -93,7 +93,7 @@ class G2P:
 
         n_best : int, optional
             Maximum number of hypotheses to produce for each word. Has no
-            effect if ``prob_mass`` is set.
+            effect if ``cum_prob`` is set.
             (Default: 3)
 
         cum_prob : float, optional
