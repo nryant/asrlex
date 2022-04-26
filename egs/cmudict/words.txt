@@ -1,0 +1,20 @@
+# Words appearing in cmudict.
+a
+an
+aardvark
+cannery
+decade
+deregulation
+the
+# Morphological variants of words cmudict.
+combatted
+loaded
+hastier
+hastiest
+# Entirely OOV words.
+gmt
+tripadvisor
+pubmed
+vhs
+permalink
+gcc
