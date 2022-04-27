@@ -1,6 +1,7 @@
 """Pronunciation dictionary."""
 from collections import defaultdict
 from pathlib import Path
+import sys
 
 from . import utils
 
@@ -201,6 +202,34 @@ class PronDict:
                 pdict.add_pron(word, pron)
         return pdict
 
+    def print_dict(self, align_lexicon=False, sep='\t', file=sys.stdout):
+        """Print mapping to STDOUT
+
+        See ``load_dict`` for output file format.
+
+        Parameters
+        ----------
+        align_lexicon : bool, optional
+            If True, output dictionary as being in Kaldi alignment lexicon
+            format.
+            (Default: False)
+
+        sep : str, optional
+            Field separator.
+            (Default: '\t')
+
+        file : filelike, optional
+            Object with ``write`` method.
+            (Default: sys.stdout)
+        """
+        for word in self:
+            for pron in sorted(self[word]):
+                pron = [str(phn) for phn in pron]
+                line = f'{word}{sep}{" ".join(pron)}'
+                if align_lexicon:
+                    line = f'{word}{sep}{line}'
+                print(line, end='\n', file=file)
+
     def write_dict(self, dict_path, align_lexicon=False, sep='\t'):
         """Write mapping to file.
 
@@ -222,13 +251,7 @@ class PronDict:
         """
         dict_path = Path(dict_path)
         with open(dict_path, 'w') as f:
-            for word in self:
-                for pron in sorted(self[word]):
-                    pron = [str(phn) for phn in pron]
-                    line = f'{word}{sep}{" ".join(pron)}\n'
-                    if align_lexicon:
-                        line = f'{word}{sep}{line}'
-                    f.write(line)
+            self.print_dict(align_lexicon=align_lexicon, sep=sep, file=f)
 
     @property
     def words(self):
