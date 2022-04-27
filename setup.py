@@ -3,10 +3,14 @@ from setuptools import setup, find_packages
 
 import versioneer
 
+versioneer.versionfile_source = "asrlex/_version.py"
+versioneer.versionfile_build = versioneer.versionfile_source
+versioneer.tag_prefix = ""
+versioneer.parentdir_prefix = "asrlex-"
+
 setup(
     #Package.
-    namespace_packages=['asrlex'],
-    packages=find_packages(),   # ???
+    packages=['asrlex'],
     entry_points={'console_scripts' : ['asrlex=asrlex.cli:main',],},
     # TODO: Determine required versions.
     install_requires=['pybindgen',
