@@ -8,7 +8,21 @@ __pycache__/
 
 # Emacs
 *~
+\#*
+\.#*
 
+
+# Downloads inside tools.
+tools/openfst*
+tools/mitlm
+tools/Phonetisaurus
+
+# Downloads/examples inside egs.
+egs/cmudict/cmudict*
+egs/cmudict/*.dict
+egs/smudict/*.g2p
+
+# 
 # Downloads.
 *.tgz
 *.gz
