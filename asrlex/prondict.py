@@ -185,7 +185,7 @@ class PronDict:
         """
         dict_path = Path(dict_path)
         pdict = PronDict(oov_pron=oov_pron)
-        with open(dict_path, 'r') as f:
+        with open(dict_path, 'r', encoding='utf-8') as f:
             for line in f:
                 if line.startswith(';;;'):
                     # Used to indicate comments in cmudict.
@@ -250,7 +250,7 @@ class PronDict:
             (Default: '\t')
         """
         dict_path = Path(dict_path)
-        with open(dict_path, 'w') as f:
+        with open(dict_path, 'w', encoding='utf-8') as f:
             self.print_dict(align_lexicon=align_lexicon, sep=sep, file=f)
 
     @property
