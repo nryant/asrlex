@@ -1,5 +1,4 @@
 """G2P using PHonetisaurus."""
-import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -7,30 +6,35 @@ import tempfile
 
 from wurlitzer import pipes
 
-from Phonetisaurus import PhonetisaurusScript as Phonetisaurus
-
+try:
+    from Phonetisaurus import PhonetisaurusScript as Phonetisaurus
+    HAS_PHONETISAURUS_PY = True
+except ModuleNotFoundError:
+    HAS_PHONETISAURUS_PY = False
 from . import utils
 
 __all__ = ['G2P']
 
 
-
-def _check_dependencies():
-    """Check that Phonetisaurus and mitlm are installed."""
-    for program in ['phonetisaurus-align', 'phonetisaurus-apply',
-                    'phonetisaurus-arpa2wfst', 'phonetisaurus-train']:
+def _check_for_phonetisaurus_bin():
+    """Check for presence of Phonetisaurus command line tools required for
+    training.
+    """
+    for program in ['phonetisaurus-align', 'phonetisaurus-arpa2wfst',
+                    'phonetisaurus-g2pfst', 'phonetisaurus-train']:
         if not utils.which(program):
-            # TODO: Add URL to INSTALL instructions once repo is public.
-            raise ImportError(
-                'Phonetisaurus required for G2P models. Please run '
-                '"tools/install_phonetisaurus.sh".')
-    if not utils.which('estimate-ngram'):
-        # TODO: Add URL to INSTALL instructions once repo is public.
-        raise ImportError(
-            'MITLM required for training G2P models. Please run '
-            '"tools/install_mitlm.sh".')
+            return False
+    return True
 
-_check_dependencies()
+HAS_PHONETISAURUS_BIN = _check_for_phonetisaurus_bin()
+
+def _check_for_mitlm_bin():
+    """Check for presence of mitlm command line tools required for training."""
+    if not utils.which('estimate-ngram'):
+        return False
+    return True
+
+HAS_MITLM_BIN = _check_for_mitlm_bin()
 
 
 RESERVED_MAP = {
@@ -80,7 +84,13 @@ class G2P:
     def __init__(self, model_path):
         model_path = Path(model_path)
         self.model_path = model_path
-        self._model = Phonetisaurus(str(model_path))
+        if HAS_PHONETISAURUS_PY:
+            self._model = Phonetisaurus(str(model_path))
+        else:
+            raise ModuleNotFoundError(
+                'Phonetisaurus Python interface required to load G2P models. '
+                'Please follow the installation instructions at: '
+                'https://github.com/nryant/asrlex')
 
     def get_prons(self, word, n_best=3, cum_prob=None, thresh=5,
                   beam=10000, accumulate=False):
@@ -179,6 +189,18 @@ class G2P:
         model : PhonetisaurusScript.Phonetisaurus
             Phonetisaurus G2P model.
         """
+        if not HAS_PHONETISAURUS_BIN:
+            raise OSError(
+                'Phonetisaurus command-line tools not found. These tools are '
+                'required for G2P training. Please check that your PATH is '
+                'correctly set or install by following the instructions at: '
+                'https://github.com/nryant/asrlex.')
+        if not HAS_MITLM_BIN:
+            raise OSError(
+                'MITLM command-line tools not found. These tools are '
+                'required for G2P training. Please check that your PATH is '
+                'correctly set or install by following the instructions at: '
+                'https://github.com/nryant/asrlex.')
         utils.validate_integer_arg(ngram_order, 'ngram_order', min_val=1)
         utils.validate_integer_arg(seq1_max, 'seq1_max', min_val=1)
         utils.validate_integer_arg(seq2_max, 'seq2_max', min_val=1)
