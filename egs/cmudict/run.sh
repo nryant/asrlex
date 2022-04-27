@@ -31,8 +31,10 @@ if [ $stage -le 1 ]; then
 fi
 
 
-##############################################                                 ### Train a G2P model using Phonetisaurus.
-##############################################                                 # Uses asrlex train command, which wraps the Phonetisaursu training script.
+##############################################
+### Train a G2P model using Phonetisaurus.
+##############################################
+# Uses asrlex train command, which wraps the Phonetisaursu training script.
 # Equivalent to:
 #
 #     phonetisaurus-train \
